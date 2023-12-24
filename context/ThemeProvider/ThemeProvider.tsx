@@ -11,21 +11,25 @@ const ThemeContext = createContext<IThemeContext | undefined>(undefined)
 
 
 export function ThemeProvider({children}: {children: React.ReactNode }){
-    const [mode, setMode] = useState('')
+    const [mode, setMode] = useState('light')
+
+    const themeHandler =() => {
+            if(localStorage.theme === 'dark' ||
+                (!('theme' in localStorage)) && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.remove('light')
+                document.documentElement.classList.add('dark')
+                setMode('dark')
+            } else if(localStorage.theme === 'light' || (!('theme' in localStorage)) && window.matchMedia('(prefers-color-scheme: light)').matches){
+                document.documentElement.classList.remove('dark')
+                document.documentElement.classList.add('light')
+                setMode('light')
+            }
+
+    }
 
     useEffect(() => {
-        const themeHandler = () => {
-            if(mode === 'light'){
-                setMode('dark')
-                document.documentElement.classList.add('dark')
-            } else {
-                setMode('light')
-                document.documentElement.classList.add('light')
-            }
-        }
-
         themeHandler()
-    }, [mode])
+    }, [mode]);
 
 
     return (
